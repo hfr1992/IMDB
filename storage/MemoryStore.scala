@@ -12,8 +12,8 @@ class MemoryChunkStore {
 //  var chunk_pool = new ArrayBuffer
 //  var block_pool = new ArrayBuffer
   
-  class HdfsBlock(p_add: Any, p_length: Int){
-    var hook: Any = p_add
+  class HdfsBlock(p_add: Array[Char], p_length: Int){
+    var hook: Array[Char] = p_add
     var length = p_length
     
     def this(){
@@ -29,12 +29,12 @@ class MemoryChunkStore {
     }
   }
   
-  def putValue(chunkId: String, value: Any) = {
+  def putValue(chunkId: String, value: Array[Char]) = {
     tryToPut(chunkId, value)
     true
   }
   
-  def tryToPut(chunkId: String, value: Any) = {
+  def tryToPut(chunkId: String, value: Array[Char]) = {
     var chunkin: HdfsBlock = new HdfsBlock()
     chunkin.hook = value
     chunkin.length = 64*1024*1024

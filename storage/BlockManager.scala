@@ -26,7 +26,7 @@ class BlockManager {
   
   class ChunkInfo() {
     var chunkId : ChunkID = new ChunkID()
-    var hook : Any = 0
+    var hook : Array[Char] = Array[Char]()
   }
   
   def get(blockId : String) = {
@@ -67,7 +67,7 @@ class BlockManager {
     new ChunkInfo()
   }
   
-  def put(blockId: String, level: Int, value: Any) = {
+  def put(blockId: String, level: Int, value: Array[Char]) = {
     var bi : BlockInfo = new BlockInfo(level)
     blockInfoPool(blockId) = bi
     

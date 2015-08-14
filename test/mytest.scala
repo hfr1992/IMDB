@@ -1,6 +1,7 @@
 package test
 
-import scala.collection.mutable.ArrayBuffer
+import scala.util.Random
+import storage.MemoryChunkStore
 
 /**
  * @author hfr
@@ -10,20 +11,42 @@ class mytest {
 }
 
 object mytest {
+  val testStringLength = 10000
+  val ran = new Random()
+  val testString = new Array[Char](testStringLength)
   
-  def testFunction(test4 : Boolean) : ArrayBuffer[Int] = {
-    if(test4){
-      null
-    }else{
-      new ArrayBuffer[Int]
+  def rePrint(time: Int) {
+    val time2 = time + 1
+    if(time < testStringLength){
+      testString(time) = ran.nextPrintableChar()
+      rePrint(time2)
     }
   }
   
-  def main(args: Array[String]){
-    println("Hello world!")
+  def main(args :Array[String]){
     
-    var test3 = false
-    var test2 : ArrayBuffer[Int] = null
-    println( test2 = (new ArrayBuffer[Int]+=1) )
+    println("**********Automatically generating some random data simulating the Chunk read from HDFS**********\n")
+    rePrint(0)
+    for( x <- testString ){
+      print(x)
+    }
+    println("\n")
+    
+    val memstore: MemoryChunkStore = MemoryChunkStore.getInstance()
+    
+    memstore.putValue("TestID1", testString)
+    
+    println("**********Stored the data into Chunk successfully**********\n")
+    
+    println("**********Getting the Chunk out, start printing......**********\n")
+    
+    val getChunkOut = memstore.getChunk("TestID1")
+    
+    for( x <- getChunkOut ){
+      print(x)
+    }
+    println("\n")
+    println("**********Finish getting out**********\n")
+    
   }
 }
