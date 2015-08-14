@@ -29,6 +29,18 @@ class MemoryChunkStore {
     }
   }
   
+  def putValue(chunkId: String, value: Any) = {
+    tryToPut(chunkId, value)
+    true
+  }
+  
+  def tryToPut(chunkId: String, value: Any) = {
+    var chunkin: HdfsBlock = new HdfsBlock()
+    chunkin.length = 64*1024*1024
+    bufferpool(chunkId) = chunkin
+    true
+  }
+  
 }
 
 object MemoryChunkStore{
