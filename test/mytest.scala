@@ -13,12 +13,12 @@ class mytest {
 object mytest {
   val testStringLength = 10000
   val ran = new Random()
-  val testString = new Array[Char](testStringLength)
+  val testString = new Array[Byte](testStringLength)
   
   def rePrint(time: Int) {
     val time2 = time + 1
     if(time < testStringLength){
-      testString(time) = ran.nextPrintableChar()
+      testString(time) = ran.nextPrintableChar().toByte
       rePrint(time2)
     }
   }

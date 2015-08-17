@@ -7,10 +7,6 @@ class ids {
   
   type TableID = Long
   
-  class ProjectionID(){
-    
-  }
-  
   class PartitionID(tid : TableID) {
     
   }

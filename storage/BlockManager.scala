@@ -1,12 +1,13 @@
 package storage
 
-import common.IDs.ChunkID
+/**
+ * @author Suijun_524457
+ */
+
+import common._
 
 import scala.collection.mutable.Map
 
-/**
- * @author hfr
- */
 class BlockManager {
   
   var blockInfoPool = Map[String, BlockInfo]()
@@ -25,8 +26,8 @@ class BlockManager {
   }
   
   class ChunkInfo() {
-    var chunkId : ChunkID = new ChunkID()
-    var hook : Array[Char] = Array[Char]()
+    var chunkId : ChunkID = new ChunkID(0,"")
+    var hook : Array[Byte] = null
   }
   
   def get(blockId : String) = {
@@ -67,7 +68,7 @@ class BlockManager {
     new ChunkInfo()
   }
   
-  def put(blockId: String, level: Int, value: Array[Char]) = {
+  def put(blockId: String, level: Int, value:Array[Byte]) = {
     var bi : BlockInfo = new BlockInfo(level)
     blockInfoPool(blockId) = bi
     
