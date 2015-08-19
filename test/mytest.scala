@@ -2,6 +2,7 @@ package test
 
 import scala.util.Random
 import storage.MemoryChunkStore
+import dbConnection.DBConnection
 
 /**
  * @author hfr
@@ -25,28 +26,42 @@ object mytest {
   
   def main(args :Array[String]){
     
-    println("**********Automatically generating some random data simulating the Chunk read from HDFS**********\n")
-    rePrint(0)
-    for( x <- testString ){
-      print(x.toChar)
+    val DBCon = new DBConnection()
+    
+    val rs = DBCon.query("select * from groups;")
+    while(rs.next()){
+      println(rs.getString("gno")+" "+rs.getString("gname")+" "+rs.getString("gnum")+" "+rs.getString("gintro")+" "+rs.getString("cno"))
     }
-    println("\n")
     
-    val memstore: MemoryChunkStore = MemoryChunkStore.getInstance()
+    DBCon.insert("insert into groups values (100, 'hello_infosys', '1', 'Is this a group?', '11111111');")
     
-    memstore.putValue("TestID1", testString)
-    
-    println("**********Stored the data into Chunk successfully**********\n")
-    
-    println("**********Getting the Chunk out, start printing......**********\n")
-    
-    val getChunkOut = memstore.getChunk("TestID1")
-    
-    for( x <- getChunkOut ){
-      print(x.toChar)
+    val rs2 = DBCon.query("select * from groups;")
+    while(rs2.next()){
+      println(rs2.getString("gno")+" "+rs2.getString("gname")+" "+rs2.getString("gnum")+" "+rs2.getString("gintro")+" "+rs2.getString("cno"))
     }
-    println("\n")
-    println("**********Finish getting out**********\n")
+    
+//    println("**********Automatically generating some random data simulating the Chunk read from HDFS**********\n")
+//    rePrint(0)
+//    for( x <- testString ){
+//      print(x.toChar)
+//    }
+//    println("\n")
+//    
+//    val memstore: MemoryChunkStore = MemoryChunkStore.getInstance()
+//    
+//    memstore.putValue("TestID1", testString)
+//    
+//    println("**********Stored the data into Chunk successfully**********\n")
+//    
+//    println("**********Getting the Chunk out, start printing......**********\n")
+//    
+//    val getChunkOut = memstore.getChunk("TestID1")
+//    
+//    for( x <- getChunkOut ){
+//      print(x.toChar)
+//    }
+//    println("\n")
+//    println("**********Finish getting out**********\n")
     
   }
 }
