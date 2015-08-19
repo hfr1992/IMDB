@@ -28,7 +28,7 @@ object mytest {
     println("**********Automatically generating some random data simulating the Chunk read from HDFS**********\n")
     rePrint(0)
     for( x <- testString ){
-      print(x)
+      print(x.toChar)
     }
     println("\n")
     
@@ -43,7 +43,7 @@ object mytest {
     val getChunkOut = memstore.getChunk("TestID1")
     
     for( x <- getChunkOut ){
-      print(x)
+      print(x.toChar)
     }
     println("\n")
     println("**********Finish getting out**********\n")

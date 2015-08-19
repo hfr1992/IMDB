@@ -87,14 +87,14 @@ class DynamicBlockBuffer() {
   /*
    * Haven't totally confirmed whether the "while" works well
    */
-  def getNumberOftuples() = {
-    var ret : Long = 0
-    var it : Iterator = this.createIterator()
-    var block : BlockStreamBase = null
-    while( (block = it.nextBlock())!=null ){
-      ret+=block.getTuplesInBlock()
-    }
-    ret
-  }
+//  def getNumberOftuples() = {
+//    var ret : Long = 0
+//    var it : Iterator = this.createIterator()
+//    var block : BlockStreamBase = null
+//    while( (block = it.nextBlock())!=null ){
+//      ret+=block.getTuplesInBlock()
+//    }
+//    ret
+//  }
   
 }
