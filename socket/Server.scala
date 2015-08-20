@@ -3,6 +3,7 @@ package socket
 import java.net.ServerSocket
 import java.net.Socket
 import java.io._
+import sqlParser.SQLSimpleParser
 
 /**
  * @author hfr
@@ -24,8 +25,29 @@ class Server{
     (new Thread(serverListener)).start()
   }
   
+  
+  
   def processSQL(query: String): String = {
     //Todo
+    val ssp = new SQLSimpleParser()
+    ssp.parser(query)
+    if(ssp.getParseStatus()){
+      //Query type
+      println("Query type: "+ssp.getQueryType())
+      //Table
+      println("Table: "+ssp.getTableName())
+      //Result
+      println("Result:")
+      val rs = ssp.getResult()
+      for(x<-rs){
+        for(xx<-x){
+          print(xx)
+        }
+        println("")
+      }
+      
+      println("")
+    }
     "\"This sentence pretends to be a result.\""
   }
   
@@ -36,7 +58,7 @@ class Server{
     val outStream = new DataOutputStream(socket.getOutputStream())
     
     def run(){
-      println("Successfully connected. Waiting for a query...")
+      println("Successfully connected. \nWaiting for a query...")
       returnInfo("Successfully connected. \nPlease input query (input 'quit' to terminate the database): ")
       while(true){
         var line = inStream.readUTF()
@@ -44,8 +66,8 @@ class Server{
         if(line=="quit"){
           return
         }
-        println("Received command: '"+line+"'. Processing...")
-        returnInfo("Query successfully. Query Result: \n----------\n"+processSQL(line)+"\n----------\n")
+        println("Received command: '"+line+"'. \nProcessing...")
+        returnInfo("Query successfully. \nQuery Result: \n----------\n"+processSQL(line)+"\n----------\n")
       }
     }
     
