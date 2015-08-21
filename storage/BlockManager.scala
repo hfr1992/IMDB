@@ -5,6 +5,7 @@ package storage
  */
 
 import common._
+import catalog._
 
 import scala.collection.mutable.Map
 
@@ -25,11 +26,6 @@ class BlockManager {
     var level = p_level
   }
   
-  class ChunkInfo() {
-    var chunkId : ChunkID = new ChunkID(0,"")
-    var hook : Array[Byte] = null
-  }
-  
   def get(blockId : String) = {
     getLocal(blockId)
   }
@@ -48,10 +44,10 @@ class BlockManager {
 //      if(blockInfoPool(blockId).level==1){
 //      }
     }else{
-      println("the chunkId is not registered locally, it's on the hdfs!")
-      var ci : ChunkInfo = loadFromHdfs(blockId)
-      put(blockId, 0, ci.hook)
-      ci.hook
+//      println("the chunkId is not registered locally, it's on the hdfs!")
+//      var ci : ChunkInfo = loadFromHdfs(blockId)
+//      put(blockId, 0, ci.hook)
+//      ci.hook
     }
     
   }
@@ -59,13 +55,13 @@ class BlockManager {
   /* Haven't finished because can't connect to Hdfs
    * 
    */
-  def loadFromHdfs(file_name : String) : ChunkInfo = {
+  def loadFromHdfs(file_name : String) = {
     var pos : Long = file_name.lastIndexOf("$")
     var file_name_former = file_name.substring(0, pos.toInt)
     var file_name_latter = file_name.substring(pos.toInt+1, file_name.length())
     var offset = Integer.parseInt(file_name_latter)
     //Haven't finished
-    new ChunkInfo()
+    //new ChunkInfo()
   }
   
   def put(blockId: String, level: Int, value:Array[Byte]) = {
@@ -88,13 +84,6 @@ class BlockManager {
 }
 
 object BlockManager{
-  
-  def main(argv: Array[String]){
-    println("Hello World!")
-    
-    var temp = new BlockManager()
-    println(temp.get("india"))
-  }
   
   var blockmanager : BlockManager = null
   

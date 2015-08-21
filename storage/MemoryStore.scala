@@ -14,36 +14,21 @@ import scala.collection.mutable.HashMap
 import scala.collection.mutable.ArrayBuffer
 
 import common.Block._
+import catalog._
 
-
-/*
- * DataStructure of InMemoryChunk
- * @blockPool is the block pool
- * @length is the size of a single block
- * */
-class HdfsBlock(
-	private var add:Array[Byte],
-	private var block_length:Long){
-	var hook = add
-	var length  = block_length
-}
-
- 
 
  class MemoryChunkStore {
-   
-   type HdfsInMemoryChunk = HdfsBlock
 
 	def putValue(blockId:String,value:Array[Byte]) = tryToPut(blockId,value)
 
-	def applyChunk(chunkId:ChunkID,block_buf:Array[Byte]):Boolean ={
+	def applyChunk(chunkId:ChunkID,chunk_buf:Chunk):Boolean ={
 		if(chunk_list_.contains(chunkId)){
 			System.out.println("chunk id already exists!")
 			false
 		}/*else if(!BufferManager::getInstance()->applyStorageDedget(CHUNK_SIZE)){
 			System.out.println("not enough memory!!\n")
 		}*/else{
-			chunk_list_(chunkId) = new HdfsInMemoryChunk(block_buf,64*1024)
+			chunk_list_(chunkId) = chunk_buf
 			true
 		}
 	}
@@ -58,7 +43,7 @@ class HdfsBlock(
     //@Waiting for solve
 	}
 
-	def updateChunkInfo(chunkId:ChunkID, chunk_info:HdfsInMemoryChunk):Boolean = {
+	def updateChunkInfo(chunkId:ChunkID, chunk_info:Chunk):Boolean = {
 		//lock_.acquire();
 		if(!chunk_list_.contains(chunkId)){
 			//lock_.release();
@@ -78,15 +63,15 @@ class HdfsBlock(
 	}
   
   /*get chunk from chunk_list_*/
-  def getChunk(chunkId:ChunkID):Option[HdfsInMemoryChunk] = {
+  def getChunk(chunkId:ChunkID) = {
     //lock_.acquire();
     if(chunk_list_.contains(chunkId)){
-        chunk_list_.get(chunkId)
+        chunk_list_.get(chunkId).get
     }else null
     //lock_.release();    
   }
 
-	def putChunk(chunkId:ChunkID, chunk_info:HdfsInMemoryChunk):Boolean = {
+	def putChunk(chunkId:ChunkID, chunk_info:Chunk):Boolean = {
 		//lock_.acquire();
 		if(chunk_list_.contains(chunkId)){
 			System.out.println("The memory chunk is already existed!\n")
@@ -124,15 +109,11 @@ class HdfsBlock(
 
 
 	private var bufferpool_ = new HashMap[String,HdfsBlock]()
-	private var chunk_list_ = new HashMap[ChunkID,HdfsInMemoryChunk]()
+	private var chunk_list_ = new HashMap[ChunkID,Chunk]()
 	// Max momery of of a single node(mb)
 	private var maxMemory = 0L
 	// Current memory useage(MB)
 	private var currentMemory = 0L
-
-	private var chunk_pool_ =  new ArrayBuffer[HdfsInMemoryChunk]()
-	private var block_pool_ = new ArrayBuffer[HdfsBlock]()
-
 }
 
 object MemoryChunkStore{

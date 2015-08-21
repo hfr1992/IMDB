@@ -13,6 +13,7 @@ import scala.collection.mutable.HashMap
 import scala.collection.mutable.ArrayBuffer
 
 import common.Block._
+import catalog._
 
 
 class ChunkReaderIterator(
@@ -242,8 +243,8 @@ class ChunkStorage(
       n match {
         case StorageLevel.MEMORY_ONLY => {
           def chunk_info = MemoryChunkStore.getInstance().getChunk(chunk_id_)
-          ret =new InMemoryChunkReaderItetaor(chunk_info.get.hook,chunk_id_,block_size_,chunk_size_,chunk_info.get.length);
-     
+          ret =new InMemoryChunkReaderItetaor(chunk_info.value_,chunk_id_,block_size_,chunk_size_,chunk_info.chunk_size_ / block_size_)
+          println("Creat ChunkReaderIterator\n")
         }
         case StorageLevel.DISK_ONLY => System.out.println("Currently, current storage level should not be DISK~! -_-\n")
         case StorageLevel.HDFS_ONLY => {  System.out.println("Currently, current storage level should not be HDFS~! -_-\n")
@@ -252,9 +253,7 @@ class ChunkStorage(
         case _ => System.out.println("current storage level: unknown!\n")
       }
     }
-
-    
-  
+  m(desirable_level)
   //lock_.release();
   return ret
   }
@@ -265,12 +264,10 @@ class ChunkStorage(
 	def setCurrentStorageLevel(current_level:StorageLevel) = { current_storage_level_ = current_level }
 
 	var block_size_ = block_size
-	var chunk_size_ = 1024L
+	var chunk_size_ = 64*1024L
 	var desirable_storage_level_ = desirable_level
 	var current_storage_level_ = StorageLevel.HDFS_ONLY
 	var chunk_id_ = chunk_id
 
 	//Lock lock_
-
-
 }
