@@ -10,6 +10,8 @@ import java.nio.ByteBuffer
 
 import scala.collection.mutable.ArrayBuffer
 
+import catalog._
+
 /**
  * Abstract class to store Chunk.
  */
