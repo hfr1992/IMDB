@@ -1,6 +1,7 @@
 package common.Block
 
 import common.Schema.Schema
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * @author hfr
@@ -87,7 +88,9 @@ abstract class BlockStreamBase(block: Block) extends Block(block.BlockSize, bloc
     new BlockStreamTraverseIterator(this)
   }
   
-  protected def getTuple(offset : Long) : Array[Byte]
+  protected def getTuple(offset: Long) : Array[Byte]
+  
+  def getCurrentPosition() : Long
   
 }
 
@@ -98,8 +101,8 @@ object BlockStreamBase{
   /* Haven't been realized.
    * Extract data from Schema to Block, which is a key step.
    */
-  def createBlock(schema : Schema, block : Block, p_actual_size: Long, p_tuple_size: Long) = {
-    new BlockStreamVar(block, schema, p_actual_size, p_tuple_size)
+  def createBlock(schema : Schema, block : Block) = {
+    new BlockStreamVar(block, schema)
   }
   
   //Haven't been realized.
@@ -113,12 +116,9 @@ object BlockStreamBase{
  * If a tuple size is larger than the size of block, we should use the BlockStreamFix to do something.
  * We change it from the origin version of CLAIMS to simplify it.
  */
-class BlockStreamVar(p_block: Block, p_schema: Schema, p_actual_size: Long, p_tuple_size: Long) extends BlockStreamBase(p_block){
+class BlockStreamVar(p_block: Block, p_schema: Schema) extends BlockStreamBase(p_block){
   val schema : Schema = p_schema
-  //The length of the data stored in the Block. It needs to be initialized!!!!!!!!!
-  var actual_size : Long = p_actual_size
-  //The size of the tuple stored in the Block. It needs to be initialized!!!!!!!!!
-  var tuple_size : Long = p_tuple_size
+  var cu_pos : Int = 0
 //  var cur_tuple_size_ : Long = 0L
 //  var var_attributes_ : Long = 0L
   
