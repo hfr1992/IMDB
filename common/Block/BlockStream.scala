@@ -14,23 +14,24 @@ abstract class BlockStreamBase(block: Block) extends Block(block.BlockSize, bloc
   class BlockStreamTraverseIterator(p_block_stream_base_ : BlockStreamBase) {
     private var block_stream_base_ = p_block_stream_base_
     private var cur = 0L
+    private var next_tuple: Array[Byte] = null
     
-    def nextTuple() = {
-      val result = block_stream_base_.getTuple(cur)
-      cur+=1
-      result
+    def hasNextTuple() = {
+      next_tuple = block_stream_base_.getTuple(cur)
+      cur = block_stream_base_.getCurrentPosition()
+      next_tuple!=null
     }
     
-    def currentTuple() = {
-      block_stream_base_.getTuple(cur)
-    }
+//    def currentTuple() = {
+//      block_stream_base_.getTuple(cur)
+//    }
     
     def getTuple(tuple_off : Long) = {
       block_stream_base_.getTuple(tuple_off)
     }
     
-    def increase_cur_() = {
-      cur+=1
+    def getNextTuple() = {
+      next_tuple
     }
     
     def reset() = {
@@ -121,17 +122,29 @@ class BlockStreamVar(p_block: Block, p_schema: Schema, p_actual_size: Long, p_tu
 //  var cur_tuple_size_ : Long = 0L
 //  var var_attributes_ : Long = 0L
   
-  def getTuple(offset: Long) = {
-    if( offset < actual_size/tuple_size ){
-      var temp = new Array[Byte](tuple_size.toInt)
-      var counter = offset*tuple_size
-      while(counter<(offset+1)*tuple_size){
-        temp((counter-offset*tuple_size).toInt) = memorySpace(counter.toInt)
-      }
-      temp
-    }else{
-      null
+  def getCurrentPosition() = {
+    cu_pos.toLong
+  }
+  
+  def getTuple(offset: Long): Array[Byte] = {
+    var result : ArrayBuffer[Byte] = ArrayBuffer[Byte]()
+    cu_pos = offset.toInt
+    
+    if(cu_pos>=BlockSize){
+      return null
     }
+    
+    while((memorySpace(cu_pos).toChar!='~')&&(cu_pos<BlockSize)){
+      result.+=(memorySpace(cu_pos))
+      cu_pos += 1
+    }
+    if(memorySpace(cu_pos).toChar=='~'){
+      cu_pos += 1
+    }else{
+      return null
+    }
+    result.toArray
+    
   }
   
 //  def constructFromBlock(block : Block, p_actual_size: Long, p_tuple_size: Long) = {

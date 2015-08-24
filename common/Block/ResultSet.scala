@@ -3,15 +3,20 @@ package common.Block
 /**
  * @author hfr
  */
-class ResultSet(r: ResultSet) extends DynamicBlockBuffer(r){
-  def print() = {
-    for(x <- block_list_){
+class ResultSet(r: DynamicBlockBuffer) extends DynamicBlockBuffer(r){
+  
+  def printRS() = {
+    for(x<-block_list_){
       val it = x.createIterator()
       var temp : Array[Byte] = null
-      while( (temp = it.nextTuple())!=null ){
-        val oneResult = temp.toString().split("^")
-        for( x<-oneResult ){
-          printf(x)
+      while(it.hasNextTuple()){
+        val nextTuple = it.getNextTuple()
+        for( x<-nextTuple ){
+          if(x.toChar=='^'){
+            print("\t")
+          }else{
+            print(x.toChar.toString())
+          }
         }
         println()
       }
