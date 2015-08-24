@@ -17,7 +17,7 @@ import catalog._
 
 
 class ChunkReaderIterator(
-      private var chunkId: ChunkID,
+      private var chunkId: String,
       private var blockSize: Long,
       private var chunkSize: Long,
       private var numberOfBlocks: Long = 0){
@@ -71,11 +71,11 @@ class ChunkReaderIterator(
 			block_cur = blockCur
 		}
 
-		def getChunkId():ChunkID = {
+		def getChunkId():String = {
 			chunk_id
 		}
 
-		def setChunkId(chunkId:ChunkID) {
+		def setChunkId(chunkId:String) {
 			chunk_id = chunkId
 		}
 
@@ -88,7 +88,7 @@ class ChunkReaderIterator(
 		}
 
 		var chunk_size = 0L
-		var chunk_id = new ChunkID(0,"")
+		var chunk_id = ""
 		var block_cur = 0L
 	}
 
@@ -105,11 +105,11 @@ class ChunkReaderIterator(
       block_cur = blockCur
     }
     
-		def getChunkId():ChunkID = {
+		def getChunkId():String = {
       chunk_id
     }
 
-    def setChunkId(chunkId:ChunkID) {
+    def setChunkId(chunkId:String) {
       chunk_id = chunkId
     }
 
@@ -122,7 +122,7 @@ class ChunkReaderIterator(
     }
 
     var chunk_size = 0L
-    var chunk_id = new ChunkID(0,"")
+    var chunk_id = ""
     var block_cur = 0L
 	}
 
@@ -143,7 +143,7 @@ class ChunkReaderIterator(
 
 class InMemoryChunkReaderItetaor(
       private var chunk_buffer:Array[Byte],
-      private var chunkId:ChunkID,
+      private var chunkId:String,
       private var blockSize:Long,
       private var chunkSize:Long,
       private var numberOfBlocks:Long = 0) extends ChunkReaderIterator(chunkId,blockSize,chunkSize,numberOfBlocks){
@@ -186,7 +186,7 @@ class InMemoryChunkReaderItetaor(
 }
 
 class DiskChunkReaderIteraror(
-      private var chunkId:ChunkID,
+      private var chunkId:String,
       private var blockSize:Long,
       private var chunkSize:Long) extends ChunkReaderIterator(chunkId,blockSize,chunkSize){
 
@@ -205,7 +205,7 @@ class DiskChunkReaderIteraror(
 }
 
 class HDFSChunkReaderIterator(
-      private var chunkId:ChunkID,
+      private var chunkId:String,
       private var blockSize:Long,
       private var chunkSize:Long) extends ChunkReaderIterator(chunkId,blockSize,chunkSize){
   
@@ -226,7 +226,7 @@ class HDFSChunkReaderIterator(
 };
 
 class ChunkStorage(
-    private var chunk_id:ChunkID,
+    private var chunk_id:String,
     private var block_size:Long,
     private var desirable_level:StorageLevel){
 
@@ -260,7 +260,7 @@ class ChunkStorage(
   
 	def printCurrentStorageLevel() = ""
 
-	def getChunkID():ChunkID = {chunk_id_}
+	def getChunkID():String = {chunk_id_}
 	def setCurrentStorageLevel(current_level:StorageLevel) = { current_storage_level_ = current_level }
 
 	var block_size_ = block_size

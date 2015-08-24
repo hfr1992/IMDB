@@ -3,7 +3,6 @@ package socket
 import java.net.ServerSocket
 import java.net.Socket
 import java.io._
-import sqlParser.SQLSimpleParser
 import java.util._
 
 import scala.collection.mutable.HashMap
@@ -15,6 +14,7 @@ import storage.TableManager
 import storage.MemoryChunkStore
 import sqlParser.SQLSimpleParser
 
+
 /**
  * @author hfr
  */
@@ -23,43 +23,32 @@ class Server{
   def initializeServer() = {
     //Hint
     println("Initializing...")
-    var cloumn:ArrayBuffer[Attribute] = new ArrayBuffer[Attribute]
-    cloumn += new Attribute("gno","int",4)
-    cloumn += new Attribute("gname","string",10)
-    cloumn += new Attribute("gnum","int",4)
-    cloumn += new Attribute("gintro","string",20)
-    cloumn += new Attribute("cno","string",4)
-    var groups = new Table("groups",cloumn)
+    
+    //Todo
+    var tableManager = TableManager.getInstance()
+    var memoryStore = MemoryChunkStore.getInstance()
+    //println("Read from chunk"+memoryStore.+"\n")
+    var groups = tableManager.creatTable("groups")
     groups.inits()
     println("Table groups is creat!")
+    
     val DBCon = new DBConnection()
-    
-    val rs = DBCon.query("select * from groups;")
-    
-//     while(rs.next()){
-//      println(rs.getString("gno")+" "+rs.getString("gname")+" "+rs.getString("gnum")+" "+rs.getString("gintro")+" "+rs.getString("cno"))
-//    }
-//    
-//    println("after insert!\n")
-//    DBCon.insert("insert into groups values (101, 'hello_suijun', '1', 'Is this a group?', '11111111');")
-//    
-//    val rs2 = DBCon.query("select * from groups;")
-//    while(rs2.next()){
-//      println(rs2.getString("gno")+" "+rs2.getString("gname")+" "+rs2.getString("gnum")+" "+rs2.getString("gintro")+" "+rs2.getString("cno"))
-//    }
-//    
+    val rs = DBCon.query("select * from groups;")   
     println("Loading data...\n")
-    TableManager.getInstance().loadDataToChunk(groups, rs)
+    
+    tableManager.loadDataToChunk(groups, rs)
+    
     println("Read from chunk\n")
-    //var record = MemoryChunkStore.getInstance().getChunk(new ChunkID(0,"groups")).value_
-    var record = groups.cur_chunk_.value_
-    var str = "" 
-    var x = 0
-    while(record(x) != 0) {str += record(x).toChar; x += 1}
-    //for (i <- record) str += i.toChar;
-    println("DATA IS:\n"+str)
-//    
-    //Todo
+    tableManager.getRecordFromChunk(groups.position_list_)
+//    var record = memoryStore.getChunk(groups.cur_chunk_.chunk_id_).value_
+//    //var record = memoryStore.getChunk("groups_0").value_
+//////    
+//    //var record = groups.cur_chunk_.value_
+//    var str = "" 
+//    var x = 0
+//    while(record(x) != 0) {str += record(x).toChar; x += 1}
+//    println("DATA IS:"+str)   
+    
     
   }
   
@@ -71,8 +60,7 @@ class Server{
     (new Thread(serverListener)).start()
   }
   
-  
-  def processSQL(query: String): String = {
+     def processSQL(query: String): String = {
     //Todo
     val ssp = new SQLSimpleParser()
     ssp.parser(query)
@@ -104,7 +92,7 @@ class Server{
     val outStream = new DataOutputStream(socket.getOutputStream())
     
     def run(){
-      println("Successfully connected. \nWaiting for a query...")
+      println("Successfully connected. Waiting for a query...")
       returnInfo("Successfully connected. \nPlease input query (input 'quit' to terminate the database): ")
       while(true){
         var line = inStream.readUTF()
@@ -112,8 +100,8 @@ class Server{
         if(line=="quit"){
           return
         }
-        println("Received command: '"+line+"'. \nProcessing...")
-        returnInfo("Query successfully. \nQuery Result: \n----------\n"+processSQL(line)+"\n----------\n")
+        println("Received command: '"+line+"'. Processing...")
+        returnInfo("Query successfully. Query Result: \n----------\n"+processSQL(line)+"\n----------\n")
       }
     }
     

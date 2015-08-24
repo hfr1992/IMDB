@@ -21,7 +21,7 @@ import catalog._
 
 	def putValue(blockId:String,value:Array[Byte]) = tryToPut(blockId,value)
 
-	def applyChunk(chunkId:ChunkID,chunk_buf:Chunk):Boolean ={
+	def applyChunk(chunkId:String,chunk_buf:Chunk):Boolean ={
 		if(chunk_list_.contains(chunkId)){
 			System.out.println("chunk id already exists!")
 			false
@@ -33,7 +33,7 @@ import catalog._
 		}
 	}
 
-	def returnChunk(chunkId:ChunkID) = {
+	def returnChunk(chunkId:String) = {
 		if(!chunk_list_.contains(chunkId)){
 			System.out.println("return fail to find the target chunk id !\n")
 		}
@@ -43,7 +43,7 @@ import catalog._
     //@Waiting for solve
 	}
 
-	def updateChunkInfo(chunkId:ChunkID, chunk_info:Chunk):Boolean = {
+	def updateChunkInfo(chunkId:String, chunk_info:Chunk):Boolean = {
 		//lock_.acquire();
 		if(!chunk_list_.contains(chunkId)){
 			//lock_.release();
@@ -54,16 +54,16 @@ import catalog._
 		return true
 	}
 
-  /*get block value from */
-	def getChunk(blockId:String):Array[Byte]={
-		if(bufferpool_.contains(blockId)){
-        bufferpool_.get(blockId).get.hook
-    }else null
-    //lock_.release();		
-	}
+//  /*get block value from */
+//	def getChunk(blockId:String):Array[Byte]={
+//		if(bufferpool_.contains(blockId)){
+//        bufferpool_.get(blockId).get.hook
+//    }else null
+//    //lock_.release();		
+//	}
   
   /*get chunk from chunk_list_*/
-  def getChunk(chunkId:ChunkID) = {
+  def getChunk(chunkId:String) = {
     //lock_.acquire();
     if(chunk_list_.contains(chunkId)){
         chunk_list_.get(chunkId).get
@@ -71,7 +71,7 @@ import catalog._
     //lock_.release();    
   }
 
-	def putChunk(chunkId:ChunkID, chunk_info:Chunk):Boolean = {
+	def putChunk(chunkId:String, chunk_info:Chunk):Boolean = {
 		//lock_.acquire();
 		if(chunk_list_.contains(chunkId)){
 			System.out.println("The memory chunk is already existed!\n")
@@ -109,7 +109,7 @@ import catalog._
 
 
 	private var bufferpool_ = new HashMap[String,HdfsBlock]()
-	private var chunk_list_ = new HashMap[ChunkID,Chunk]()
+	private var chunk_list_ = new HashMap[String,Chunk]()
 	// Max momery of of a single node(mb)
 	private var maxMemory = 0L
 	// Current memory useage(MB)

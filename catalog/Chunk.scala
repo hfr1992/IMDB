@@ -15,34 +15,36 @@ import java.util._
  * @tableId is the id of the table
  * @chunkOff is the offset in a certain table
  */
-class ChunkID(
-    private var chunk_offset:Int,
-    private var table_id:String){
-  
-  def this() = {
-    this(0,"")
-  }
-  var chunkOff = chunk_offset
-
-  var tableId = table_id
-
-  def ==(r:ChunkID): Boolean = this.tableId==r.tableId&&this.chunkOff==r.chunkOff
-}
+//class ChunkID(
+//    private var chunk_offset:Int,
+//    private var table_id:String){
+//  
+//  def this() = {
+//    this(0,"")
+//  }
+//  var chunkOff = chunk_offset
+//
+//  var tableId = table_id
+//
+//  def ==(r:ChunkID): Boolean = this.tableId==r.tableId&&this.chunkOff==r.chunkOff
+//  
+//  def eqpuls(r:ChunkID) = this.tableId==r.tableId&&this.chunkOff==r.chunkOff
+//}
 
 /*
  * common info of Chunk
  */
 class Chunk (
   private var chunk_size:Long,
-  private var chunk_id:ChunkID,
+  private var chunk_id:String,
   private var value:Array[Byte],
   private var storage_level:StorageLevel){
   
-  def this(chunk_size:Long,chunk_id:ChunkID,storage_level:StorageLevel) = {
+  def this(chunk_size:Long,chunk_id:String,storage_level:StorageLevel) = {
     this(chunk_size,chunk_id,new Array[Byte](chunk_size.toInt),storage_level)
   }
   
-  def this(chunk_size:Long,chunk_id:ChunkID) = {
+  def this(chunk_size:Long,chunk_id:String) = {
     this(chunk_size,chunk_id,new Array[Byte](chunk_size.toInt),StorageLevel.DESIRIABLE_STORAGE_LEVEL)
   }
 
@@ -57,10 +59,10 @@ class Chunk (
       value(actual_size_.toInt) = i
       actual_size_ += 1
     }
-//    println("before:"+str+"\n")
-//    str = ""
-//    for(j <- value) str += j;
-//    println("after:"+str+"\n")
+//    var str = ""
+//    var i =0
+//    while(value(i) != 0) {str += value(i).toChar; i += 1}
+//    println("value = "+str+"\n")
   }
   
   var chunk_size_ = chunk_size

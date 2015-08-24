@@ -17,12 +17,12 @@ import catalog._
  */
 private abstract class ChunkStore() {
   
-  def storeChunk(chunk_id:ChunkID,value:Array[Byte],length:Long=1024):Boolean = false //virtual
+  def storeChunk(chunk_id:String,value:Array[Byte],length:Long=1024):Boolean = false //virtual
   //or: def storeChunk(chunk_id:ChunkID,value:ArrayBuffer[Block],length:Long=1024):Boolean = false
   
-  def getChunk(chunk_id:ChunkID): ChunkStore = this  //virtual
+  def getChunk(chunk_id:String): ChunkStore = this  //virtual
 
-  def remove(chunk_id:ChunkID): Boolean = false  //virtual
-  def contains(chunk_id:ChunkID): Boolean = false //virtual
-  def getSize(chunk_id:ChunkID): Long = 0   //Virtual
+  def remove(chunk_id:String): Boolean = false  //virtual
+  def contains(chunk_id:String): Boolean = false //virtual
+  def getSize(chunk_id:String): Long = 0   //Virtual
 }

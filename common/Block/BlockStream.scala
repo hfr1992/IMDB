@@ -1,7 +1,6 @@
 package common.Block
 
 import common.Schema.Schema
-import scala.collection.mutable.ArrayBuffer
 
 /**
  * @author hfr
@@ -18,7 +17,7 @@ abstract class BlockStreamBase(block: Block) extends Block(block.BlockSize, bloc
     
     def nextTuple() = {
       val result = block_stream_base_.getTuple(cur)
-      cur = block_stream_base_.getCurrentPosition()
+      cur+=1
       result
     }
     
@@ -28,6 +27,10 @@ abstract class BlockStreamBase(block: Block) extends Block(block.BlockSize, bloc
     
     def getTuple(tuple_off : Long) = {
       block_stream_base_.getTuple(tuple_off)
+    }
+    
+    def increase_cur_() = {
+      cur+=1
     }
     
     def reset() = {
@@ -83,9 +86,7 @@ abstract class BlockStreamBase(block: Block) extends Block(block.BlockSize, bloc
     new BlockStreamTraverseIterator(this)
   }
   
-  protected def getTuple(offset: Long) : Array[Byte]
-  
-  def getCurrentPosition() : Long
+  protected def getTuple(offset : Long) : Array[Byte]
   
 }
 
@@ -96,8 +97,8 @@ object BlockStreamBase{
   /* Haven't been realized.
    * Extract data from Schema to Block, which is a key step.
    */
-  def createBlock(schema : Schema, block : Block) = {
-    new BlockStreamVar(block, schema)
+  def createBlock(schema : Schema, block : Block, p_actual_size: Long, p_tuple_size: Long) = {
+    new BlockStreamVar(block, schema, p_actual_size, p_tuple_size)
   }
   
   //Haven't been realized.
@@ -111,33 +112,26 @@ object BlockStreamBase{
  * If a tuple size is larger than the size of block, we should use the BlockStreamFix to do something.
  * We change it from the origin version of CLAIMS to simplify it.
  */
-class BlockStreamVar(p_block: Block, p_schema: Schema) extends BlockStreamBase(p_block){
+class BlockStreamVar(p_block: Block, p_schema: Schema, p_actual_size: Long, p_tuple_size: Long) extends BlockStreamBase(p_block){
   val schema : Schema = p_schema
-  var cu_pos : Int = 0
+  //The length of the data stored in the Block. It needs to be initialized!!!!!!!!!
+  var actual_size : Long = p_actual_size
+  //The size of the tuple stored in the Block. It needs to be initialized!!!!!!!!!
+  var tuple_size : Long = p_tuple_size
 //  var cur_tuple_size_ : Long = 0L
 //  var var_attributes_ : Long = 0L
   
-  def getCurrentPosition() = {
-    cu_pos.toLong
-  }
-  
-  def getTuple(offset: Long): Array[Byte] = {
-    var result : ArrayBuffer[Byte] = null
-    cu_pos = offset.toInt
-    
-    if(cu_pos>=BlockSize){
-      return null
+  def getTuple(offset: Long) = {
+    if( offset < actual_size/tuple_size ){
+      var temp = new Array[Byte](tuple_size.toInt)
+      var counter = offset*tuple_size
+      while(counter<(offset+1)*tuple_size){
+        temp((counter-offset*tuple_size).toInt) = memorySpace(counter.toInt)
+      }
+      temp
+    }else{
+      null
     }
-    
-    while((memorySpace(cu_pos).toChar!='~')&&(cu_pos<BlockSize)){
-      result.+=(memorySpace(cu_pos))
-      cu_pos += 1
-    }
-    if(memorySpace(cu_pos).toChar!='~'){
-      result = null
-    }
-    result.toArray
-    
   }
   
 //  def constructFromBlock(block : Block, p_actual_size: Long, p_tuple_size: Long) = {

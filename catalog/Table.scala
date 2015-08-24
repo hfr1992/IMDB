@@ -61,38 +61,23 @@ class Table(
    * Return Key-Position pair to build index
    * */
   def returnKeyPositionPair = {
-    var tmpPair = key_position_pair_
-    key_position_pair_.clear()
-    tmpPair
+   key_position_pair_
   }
-  
-//  def loadDataToChunk(value:ArrayBuffer[Byte]) = {
-//    var cur_point = 0
-//    
-//    while(cur_point < value.length){
-//      var tmpArr = new ArrayBuffer[Byte]
-//      for(i <- cur_point until cur_point+record_length_)
-//        tmpArr += value(i)
-//      if((cur_chunk_.actual_size_ + record_length_) > cur_chunk_.chunk_size_){
-//        //MemoryChunkStore.getInstance().applyChunk(cur_chunk_.chunk_id_, cur_chunk_)
-//        cur_chunk_ = new Chunk(64*1024*1024,new ChunkID(chunk_num_,table_name_))
-//        chunk_num_ += 1
-//      }else //insertOneTuple(tmpArr)
-//      cur_point += record_length_
-//    }
-//    
-//  }
   
   def insertOneTuple(tuple_key:String, tuple_value:Array[Byte]) = {
     //println("befo insert"+tuple_value.length + "\n")
       if((cur_chunk_.actual_size_ + tuple_value.length) > cur_chunk_.chunk_size_){
-        cur_chunk_ = new Chunk(64*1024*1024,new ChunkID(chunk_num_,table_name_))
+        cur_chunk_ = new Chunk(64*1024*1024,table_name_ +"_"+ (chunk_num_).toString())
         MemoryChunkStore.getInstance().applyChunk(cur_chunk_.chunk_id_, cur_chunk_)
         chunk_num_ += 1
       }
+
+      
      cur_chunk_.putValue(tuple_value)
      var position = new IndexPosition(cur_chunk_.chunk_id_,cur_chunk_.actual_size_ - tuple_value.length)
-     key_position_pair_(tuple_key) = position
+     position_list_ += position //for test
+     var indexMap = new IndexPositionMap(tuple_key,position)
+     key_position_pair_  += indexMap
   }
   
   //Name of the table
@@ -116,11 +101,13 @@ class Table(
   private var chunk_num_ = 1
   
   //Key-Position pair of index for a certain attribute
-  var key_position_pair_ = new HashMap[String,IndexPosition]()
+  var key_position_pair_ = new ArrayBuffer[IndexPositionMap]()
+  var position_list_ = new ArrayBuffer[IndexPosition]  //for test
   
   //key-Position pair for all the index attribute
   //@For further use
-  var kp_pair_list_ = new HashMap[Attribute,HashMap[String,IndexPosition]]
+  //var kp_pair_list_ = new 
+  var kp_pair_list_ = new HashMap[Attribute,ArrayBuffer[IndexPositionMap]]
   
-  var cur_chunk_ = new Chunk(64*1024*1024,new ChunkID(0,table_name_))
+  var cur_chunk_ = new Chunk(64*1024*1024, table_name_ +"_"+ 0.toString())
 }

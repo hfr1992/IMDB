@@ -33,6 +33,7 @@ class TableManager {
         tuple_buf += '^'
       }// tuple_buf.concat(rs.getString(i.getAttrName)+'^')
       tuple_buf += '~'
+//      printf("tuple_buf = "+tuple_buf+"\n")
       table.insertOneTuple(tuple_key, tuple_buf.getBytes)
       
      //println(tuple_buf+"   "+ test + "\n")
@@ -58,6 +59,9 @@ class TableManager {
     var block_list = new ArrayBuffer[Block]
     var block_buf = new Block(1024*1024)
     var point = 0L
+    
+    print("record_position_list length = "+record_position_list.length + "\n")
+    
     for(i <- record_position_list) {
       if(getOneTuple(i).length + point > block_buf.BlockSize) {
         var block = new Block(block_buf)
@@ -65,10 +69,13 @@ class TableManager {
         block_buf.memorySpace = new Array[Byte](1024*1024)
         point = 0L
       }
-      for(j <- getOneTuple(i)) {
+      //print("point = "+point+"\n")
+      var buf = getOneTuple(i)
+      for(j <- buf) {
         block_buf.memorySpace(point.toInt) = j
         point += 1
       }
+      
     }
     block_list
   }
@@ -79,15 +86,18 @@ class TableManager {
    * Return a Array[Byte] of data
    * */
   def getOneTuple (record_position:IndexPosition) = {
+   // printf("get tuple \n")
     var memoryChunk = MemoryChunkStore.getInstance().getChunk(record_position.chunk_id_)
+    
     var start_add = record_position.tuple_offset_.toInt
     var strBuf = ""
     if (memoryChunk != null){
       while(memoryChunk.value_(start_add) != '~'){
-        strBuf += memoryChunk.value_(start_add)
+        strBuf += memoryChunk.value_(start_add).toChar
         start_add += 1
       }
       strBuf += '~'
+      //printf("data:"+strBuf+"\n")
       strBuf.getBytes
     }else {
       System.out.println("chunk don't exist!\n")
@@ -95,6 +105,16 @@ class TableManager {
     }
   }
   
+  def creatTable(table_name:String) = {
+    var cloumn:ArrayBuffer[Attribute] = new ArrayBuffer[Attribute]
+    cloumn += new Attribute("gno","int",4)
+    cloumn += new Attribute("gname","string",10)
+    cloumn += new Attribute("gnum","int",4)
+    cloumn += new Attribute("gintro","string",20)
+    cloumn += new Attribute("cno","string",4)
+    var table = new Table(table_name,cloumn)
+    table
+  }
   
   var table_list_ = new HashMap[String,Table]()
   
