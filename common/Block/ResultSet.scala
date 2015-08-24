@@ -9,7 +9,11 @@ class ResultSet(r: ResultSet) extends DynamicBlockBuffer(r){
       val it = x.createIterator()
       var temp : Array[Byte] = null
       while( (temp = it.nextTuple())!=null ){
-        println(temp)
+        val oneResult = temp.toString().split("^")
+        for( x<-oneResult ){
+          printf(x)
+        }
+        println()
       }
     }
   }
