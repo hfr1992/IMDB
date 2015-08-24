@@ -15,19 +15,24 @@ abstract class BlockStreamBase(block: Block) extends Block(block.BlockSize, bloc
   class BlockStreamTraverseIterator(p_block_stream_base_ : BlockStreamBase) {
     private var block_stream_base_ = p_block_stream_base_
     private var cur = 0L
+    private var next_tuple: Array[Byte] = null
     
-    def nextTuple() = {
-      val result = block_stream_base_.getTuple(cur)
+    def hasNextTuple() = {
+      next_tuple = block_stream_base_.getTuple(cur)
       cur = block_stream_base_.getCurrentPosition()
-      result
+      next_tuple!=null
     }
     
-    def currentTuple() = {
-      block_stream_base_.getTuple(cur)
-    }
+//    def currentTuple() = {
+//      block_stream_base_.getTuple(cur)
+//    }
     
     def getTuple(tuple_off : Long) = {
       block_stream_base_.getTuple(tuple_off)
+    }
+    
+    def getNextTuple() = {
+      next_tuple
     }
     
     def reset() = {
@@ -122,7 +127,7 @@ class BlockStreamVar(p_block: Block, p_schema: Schema) extends BlockStreamBase(p
   }
   
   def getTuple(offset: Long): Array[Byte] = {
-    var result : ArrayBuffer[Byte] = null
+    var result : ArrayBuffer[Byte] = ArrayBuffer[Byte]()
     cu_pos = offset.toInt
     
     if(cu_pos>=BlockSize){
@@ -133,8 +138,10 @@ class BlockStreamVar(p_block: Block, p_schema: Schema) extends BlockStreamBase(p
       result.+=(memorySpace(cu_pos))
       cu_pos += 1
     }
-    if(memorySpace(cu_pos).toChar!='~'){
-      result = null
+    if(memorySpace(cu_pos).toChar=='~'){
+      cu_pos += 1
+    }else{
+      return null
     }
     result.toArray
     
