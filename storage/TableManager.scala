@@ -14,6 +14,11 @@ import scala.collection.mutable.ArrayBuffer
 
 import catalog._
 import common.Block.Block
+import common.Block.BlockStreamBase
+import common.Block.BlockStreamVar
+import common.Block.DynamicBlockBuffer
+import common.Block.PrintResultSet
+import common.Schema.Schema
 
 class TableManager {
   
@@ -35,9 +40,6 @@ class TableManager {
       tuple_buf += '~'
 //      printf("tuple_buf = "+tuple_buf+"\n")
       table.insertOneTuple(tuple_key, tuple_buf.getBytes)
-      
-     //println(tuple_buf+"   "+ test + "\n")
-      //test += 1
     }
     
   }
@@ -56,28 +58,30 @@ class TableManager {
    * Get records from chunk according to the position list
    * */
   def getRecordFromChunk(record_position_list:ArrayBuffer[IndexPosition]) = {
-    var block_list = new ArrayBuffer[Block]
+    //var block_list = new ArrayBuffer[Block]
+    val dbb = new DynamicBlockBuffer()
     var block_buf = new Block(1024*1024)
     var point = 0L
-    
-    print("record_position_list length = "+record_position_list.length + "\n")
     
     for(i <- record_position_list) {
       if(getOneTuple(i).length + point > block_buf.BlockSize) {
         var block = new Block(block_buf)
-        block_list += block
+        dbb.atomicAppendNewBlock(new BlockStreamVar(block, new Schema()))
         block_buf.memorySpace = new Array[Byte](1024*1024)
         point = 0L
       }
-      //print("point = "+point+"\n")
       var buf = getOneTuple(i)
       for(j <- buf) {
         block_buf.memorySpace(point.toInt) = j
         point += 1
       }
-      
     }
-    block_list
+    dbb.atomicAppendNewBlock(new BlockStreamVar(block_buf, new Schema()))
+    /*
+     * Print result
+     * */
+    val rs = new PrintResultSet(dbb)
+    rs.printRS()
   }
   
   /*

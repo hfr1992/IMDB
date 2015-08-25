@@ -134,11 +134,11 @@ class BlockStreamVar(p_block: Block, p_schema: Schema) extends BlockStreamBase(p
       return null
     }
     
-    while((memorySpace(cu_pos).toChar!='~')&&(cu_pos<BlockSize)){
+    while((cu_pos<BlockSize)&&(memorySpace(cu_pos).toChar!='~')){
       result.+=(memorySpace(cu_pos))
       cu_pos += 1
     }
-    if(memorySpace(cu_pos).toChar=='~'){
+    if((cu_pos<BlockSize)&&(memorySpace(cu_pos).toChar=='~')){
       cu_pos += 1
     }else{
       return null

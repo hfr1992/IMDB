@@ -3,7 +3,7 @@ package common.Block
 /**
  * @author hfr
  */
-class ResultSet(r: DynamicBlockBuffer) extends DynamicBlockBuffer(r){
+class PrintResultSet(r: DynamicBlockBuffer) extends DynamicBlockBuffer(r){
   
   def printRS() = {
     for(x<-block_list_){

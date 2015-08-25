@@ -8,7 +8,7 @@ import common.Block.Block
 import common.Block.BlockStreamBase
 import common.Block.BlockStreamVar
 import common.Block.DynamicBlockBuffer
-import common.Block.ResultSet
+import common.Block.PrintResultSet
 import common.Schema.Schema
 
 /**
@@ -93,7 +93,7 @@ object mytest {
     dbb.atomicAppendNewBlock(bsv3)
     dbb.atomicAppendNewBlock(bsv4)
     
-    val rs = new ResultSet(dbb)
+    val rs = new PrintResultSet(dbb)
     rs.printRS()
 //    for(x<-rs.block_list_){
 //      println(x.BlockSize)

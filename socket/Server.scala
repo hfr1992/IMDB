@@ -13,6 +13,9 @@ import catalog._
 import storage.TableManager
 import storage.MemoryChunkStore
 import sqlParser.SQLSimpleParser
+import common.Schema.Schema
+import common.Block.BlockStreamVar
+import common.Block.DynamicBlockBuffer
 
 
 /**
@@ -40,6 +43,7 @@ class Server{
     
     println("Read from chunk\n")
     tableManager.getRecordFromChunk(groups.position_list_)
+    
 //    var record = memoryStore.getChunk(groups.cur_chunk_.chunk_id_).value_
 //    //var record = memoryStore.getChunk("groups_0").value_
 //////    
