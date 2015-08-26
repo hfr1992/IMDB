@@ -17,17 +17,21 @@ import common.Schema.Schema
 import common.Block.BlockStreamVar
 import common.Block.DynamicBlockBuffer
 
-
 /**
- * @author hfr
+ * @author Feiran
+ * The Server is the class initializing the resource, getting the SQL query from the client, processing it and printing the result.
+ * It create a thread to listen the Client.
  */
 class Server{
   
+  /**
+   * Initializing the server, as well as the resource.
+   * Loading data from PostgreSQL.
+   */
   def initializeServer() = {
     //Hint
     println("Initializing...")
     
-    //Todo
     var tableManager = TableManager.getInstance()
     var memoryStore = MemoryChunkStore.getInstance()
     //println("Read from chunk"+memoryStore.+"\n")
@@ -56,6 +60,9 @@ class Server{
     
   }
   
+  /**
+   * Start the server listener.
+   */
   def startListener() = {
     //Hint
     println("Starting listener...Waiting for client...")
@@ -64,7 +71,10 @@ class Server{
     (new Thread(serverListener)).start()
   }
   
-     def processSQL(query: String): String = {
+  /**
+   * Simply parse the SQL and return the key information.
+   */
+  def processSQL(query: String): String = {
     //Todo
     val ssp = new SQLSimpleParser()
     ssp.parser(query)
@@ -88,13 +98,22 @@ class Server{
     "\"This sentence pretends to be a result.\""
   }
   
-  
+  /**
+   * The listener getting command from the client.
+   */
   class ServerListener(port: Int) extends Runnable{
+    //Socket connection
     val serverSocket = new ServerSocket(port)
+    //Start connection
     val socket = serverSocket.accept()
+    //The InputStream receiving data from Client
     val inStream = new DataInputStream(socket.getInputStream())
+    //The OutputStream sending data to Client
     val outStream = new DataOutputStream(socket.getOutputStream())
     
+    /**
+     * Running the thread to receiving messages from Client.
+     */
     def run(){
       println("Successfully connected. Waiting for a query...")
       returnInfo("Successfully connected. \nPlease input query (input 'quit' to terminate the database): ")
@@ -109,6 +128,9 @@ class Server{
       }
     }
     
+    /**
+     * Return message to the Client.
+     */
     def returnInfo(info: String) = {
       outStream.writeUTF(info);
     }
@@ -117,6 +139,9 @@ class Server{
 }
 
 object Server{
+  /**
+   * The entrance of the Server.
+   */
   def main(args: Array[String]){
     println("Starting...")
     val server = new Server()
