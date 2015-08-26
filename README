@@ -1,0 +1,51 @@
+===================================================================================
+Version 0.1.0
+Time: 2015-08-26
+===================================================================================
+
+===================================================================================
+Authors:
+-----------------------------------------------------------------------------------
+Name: Feiran Huang
+Email: hfr1992#163.com (replace # with @)
+-----------------------------------------------------------------------------------
+Name: Suijun Tong
+Email: suijun_tong#qq.com (replace # with @)
+===================================================================================
+
+===================================================================================
+Environment:
+-----------------------------------------------------------------------------------
+CPU: Intel Core i3-2310M 2.10GHz
+Main-Memory: 6.00 GB
+Hard-Disk: 750 GB
+OS: Windows 10 professional (64-bit)
+Java: Java 1.7.0_45
+Scala: Scala 2.11.7
+IDE: Eclipse Standard Luna Service Release 2 (4.4.2)
+Scala IDE for Eclipse: 4.1.1.v-2_11-201507261049-bc34267
+RDBMS: PostgreSQL 9.4.4
+JDBC driver: postgresql-9.4-1200.jdbc41.jar
+===================================================================================
+
+===================================================================================
+Deployment:
+-----------------------------------------------------------------------------------
+1. Create a Scala project in Eclipse.
+2. Import the codes into the "src" directory.
+3. Add the JDBC driver "postgresql-9.4-1200.jdbc41.jar" as External JARs
+4. Start the PostgreSQL and import the database.
+5. Finished.
+===================================================================================
+
+===================================================================================
+Run:
+-----------------------------------------------------------------------------------
+1. Right click the "socket/Server.scala" and select "Run As" - "Scala Application".
+2. Right click the "socket/Client.scala" and select "Run As" - "Scala Application".
+3. Input the SQL query in the console of Client, press "enter".
+4. Return the query result.
+5. Goto step 3 until you want to quit.
+6. Input "quit", press "enter".
+7. Finished.
+===================================================================================
