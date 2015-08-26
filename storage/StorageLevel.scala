@@ -1,35 +1,28 @@
-/**
- * 07.Aug.2015
- * @author Suijun_524457
- */
-
 package storage
 
-import java.io.{ObjectInput, ObjectOutput}
-import java.util.concurrent.ConcurrentHashMap
-
-
 /**
- * The [[StorageLevel$]] singleton object contains some static constants
+ * The StorageLevel singleton object contains some static constants
  * for commonly useful storage levels. To create your own storage level object, use the
  * factory method of the singleton object (`StorageLevel(...)`).
+ * @author Suijun
+ * 26, Aug, 2015
  */
 
 class StorageLevel(
     private var _useDisk: Boolean,
     private var _useMemory: Boolean,
     private var _useHdfs: Boolean){
-
-  // TODO: Also add fields for caching priority, dataset ID, and flushing.
-  
+  // Whether use disk to store data
   def useDisk = _useDisk
+  // Whether use Memory to store data
   def useMemory = _useMemory
+  // Whether use Hdfs to store data
   def useHdfs = _useHdfs
 }
-/**
- * Various [[storage.StorageLevel]] defined and utility functions for creating
- * new storage levels.
- */
+
+/*
+ * Singleton object of StoragLevel
+ * */
 object StorageLevel {
   val NONE = new StorageLevel(false, false, false)
   val DISK_ONLY = new StorageLevel(true, false, false)
