@@ -1,7 +1,7 @@
 package common.Schema
 
 /**
- * @author hfr
+ * @author Feiran
  */
 class Schema {
   
