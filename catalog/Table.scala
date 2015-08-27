@@ -79,7 +79,7 @@ class Table(
   def insertOneTuple(tuple_key:String, tuple_value:Array[Byte]) = {
      if((cur_chunk_.actual_size_ + tuple_value.length) > cur_chunk_.chunk_size_){
        /* After a chunk is full, create a new chunk and add it to In-memory Chunk pool. */
-       cur_chunk_ = new Chunk(64*1024*1024,table_name_ +"_"+ (chunk_num_).toString())
+       cur_chunk_ = new Chunk(64*256*1024,table_name_ +"_"+ (chunk_num_).toString())
        MemoryChunkStore.getInstance().applyChunk(cur_chunk_.chunk_id_, cur_chunk_)
        chunk_num_ += 1
      }
@@ -110,7 +110,7 @@ class Table(
   // Name of the table
   var table_name_ = table_name
   // Current Chunk of the table, use for append data.
-  var cur_chunk_ = new Chunk(64*1024*1024, table_name_ +"_"+ 0.toString())
+  var cur_chunk_ = new Chunk(64*256*1024, table_name_ +"_"+ 0.toString())
   // List of attribute
   private var attribute_list_ = attribute_list
   // List of the index attribute

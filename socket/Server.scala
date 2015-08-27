@@ -24,6 +24,12 @@ import common.Block.DynamicBlockBuffer
  */
 class Server{
   
+  
+  // Object of TableManager
+  var tableManager = TableManager.getInstance()
+  // Object of MemoryStore
+  var memoryStore = MemoryChunkStore.getInstance()
+
   /**
    * Initializing the server, as well as the resource.
    * Loading data from PostgreSQL.
@@ -32,8 +38,7 @@ class Server{
     //Hint
     println("Initializing...")
     
-    var tableManager = TableManager.getInstance()
-    var memoryStore = MemoryChunkStore.getInstance()
+    
     //println("Read from chunk"+memoryStore.+"\n")
     var groups = tableManager.creatTable("groups")
     groups.inits()
@@ -45,19 +50,8 @@ class Server{
     
     tableManager.loadDataToChunk(groups, rs)
     
-    println("Read from chunk\n")
-    tableManager.getRecordFromChunk(groups.position_list_)
-    
-//    var record = memoryStore.getChunk(groups.cur_chunk_.chunk_id_).value_
-//    //var record = memoryStore.getChunk("groups_0").value_
-//////    
-//    //var record = groups.cur_chunk_.value_
-//    var str = "" 
-//    var x = 0
-//    while(record(x) != 0) {str += record(x).toChar; x += 1}
-//    println("DATA IS:"+str)   
-    
-    
+//    println("Read from chunk\n")
+//    tableManager.getRecordFromChunk(groups.position_list_)
   }
   
   /**
@@ -71,6 +65,37 @@ class Server{
     (new Thread(serverListener)).start()
   }
   
+ /*
+  * process the query according to the query type
+  * */
+  def parserQuery(typeOfQuery:String,tableOfQuery:String,resultSet:ArrayBuffer[Array[String]]) = {
+    typeOfQuery match{
+      case "insert" => {
+         var table = tableManager.table_list_.get(tableOfQuery).get
+         var tuple_key = ""
+         var tuple_value = ""
+         for (r <- resultSet) {
+           tuple_key = r(0)
+           for(rr <- r){
+             tuple_value += rr
+             tuple_value += '^'
+           }
+           tuple_value += '~'
+           table.insertOneTuple(tuple_key, tuple_value.getBytes)
+           printf(tuple_value+"\n")
+           tuple_value = ""
+         }
+      }
+      case "select" => {
+        
+         //Todo
+            
+      }
+      case _ => print("Wrong Sql query!")
+    }
+  }
+      
+  
   /**
    * Simply parse the SQL and return the key information.
    */
@@ -80,20 +105,26 @@ class Server{
     ssp.parser(query)
     if(ssp.getParseStatus()){
       //Query type
-      println("Query type: "+ssp.getQueryType())
+      var queryType = ssp.getQueryType()
+      println("Query type: "+queryType)
       //Table
-      println("Table: "+ssp.getTableName())
+      var queryTable = ssp.getTableName()
+      println("Table: "+queryTable)
       //Result
-      println("Result:")
+      //println("Result:")
       val rs = ssp.getResult()
-      for(x<-rs){
-        for(xx<-x){
-          print(xx)
-        }
-        println("")
-      }
-      
-      println("")
+      if(tableManager.table_list_.contains(queryTable)){
+        parserQuery(queryType,queryTable,rs)
+      } else
+        println("Table "+queryTable+" is not exist!\n");
+//      for(x<-rs){
+//        for(xx<-x){
+//          print(xx)
+//        }
+//        println("")
+//      }
+//      ArrayBuffer[Array[String]]
+//      println("")
     }
     "\"This sentence pretends to be a result.\""
   }

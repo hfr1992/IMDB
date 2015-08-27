@@ -28,6 +28,7 @@ class TableManager {
    * rs: resultset from RDBMS
    * */
   def loadDataToChunk(table:Table,rs:ResultSet) = {
+    var test = 0  //for test
     while(rs.next()){   // Get the record one by one
       var tuple_buf = ""
       var tuple_key = rs.getString(table.getIndexAttribute()(0).getAttrName())
@@ -40,6 +41,10 @@ class TableManager {
       
       // Insert one tuple of data at one time.
       table.insertOneTuple(tuple_key, tuple_buf.getBytes)
+      
+      //for test
+//      printf("test = " + test +"\n")
+//      test += 1
     }
     
   }
@@ -59,7 +64,7 @@ class TableManager {
    * */
   def getRecordFromChunk(record_position_list:ArrayBuffer[IndexPosition]) = {
     val dbb = new DynamicBlockBuffer()
-    var block_buf = new Block(1024*1024)
+    var block_buf = new Block(256*1024)
     var point = 0L
     for(i <- record_position_list) {  
       //For each position, get one record
@@ -69,7 +74,7 @@ class TableManager {
         /* When the block is full add it to DynamicBlockBuffer, and create a new block. */
         var block = new Block(block_buf)
         dbb.atomicAppendNewBlock(new BlockStreamVar(block, new Schema()))
-        block_buf.memorySpace = new Array[Byte](1024*1024)
+        block_buf.memorySpace = new Array[Byte](256*1024)
         point = 0L
       }
       var buf = getOneTuple(i)
@@ -123,6 +128,7 @@ class TableManager {
     cloumn += new Attribute("gintro","string",20)
     cloumn += new Attribute("cno","string",4)
     var table = new Table(table_name,cloumn)
+    table_list_(table_name) = table
     table
   }
   
