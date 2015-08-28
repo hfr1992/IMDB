@@ -2,17 +2,19 @@ package common
 
 /**
  * All the ids are defined in this file or better code organization purposes.
+ * For further use.
  * @author Suijun
  * 27, Aug, 2015
  */
 
-class ids {
+object ids {
  
   /*
    * Below are ids define on primary data type
    * */
   type NodeID = Int
   type TableID = Long
+  
   type AttributeOffset = Long
   type ProjectionOffset = Int
   type ColumnOffset = Long
@@ -30,6 +32,10 @@ class ids {
     
     def == (r:NodeAddress):Boolean = {
       ip_ == r.ip_ && port_ == r.port
+    }
+    
+    override def toString() = {
+      ip + "_" + port
     }
  
     var ip_ :String = ip
@@ -55,6 +61,11 @@ class ids {
      def == (r:AttributeID):Boolean = {
        table_id == r.table_id && offset == r.offset
      }
+     
+     override def toString() = {
+      tid.toString() + "_" + off.toString()
+    }
+ 
    } 
 
 
@@ -83,6 +94,9 @@ class ids {
         false
      }
      
+     override def toString() = {
+      tid.toString() + "_" + off.toString()
+    }
    }
 
 /**
@@ -102,6 +116,10 @@ class ids {
      def == (r:ColumnID):Boolean = {
        projection_id == r.projection_id && column_off == r.column_off
      }
+     
+     override def toString() = {
+      pid.toString() + "_" + off.toString()
+    }
    }
 
 /**
@@ -139,6 +157,10 @@ class ids {
      def getPathAndName():String = {
        ""
      }
+     
+     override def toString() = {
+      projection_id.toString() + "_" + off.toString()
+    }
    }
 /**
  * ChunkID: a chunk corresponds to one partition.
@@ -164,8 +186,15 @@ class ids {
     else
        false
      }
-   }
+     
+     override def toString() = {
+      partition_id.toString() + "_" + chunk_off.toString()
+     }
+  }
 
+ /*
+  * ExchangeID is design for chunk exchange
+  * */
    class ExchangeID (
        private var partition_offset:Long,
        private var exchange_id:Long) {
@@ -180,5 +209,9 @@ class ids {
      def ==(r:ExchangeID):Boolean = {
        exchange_id_ == r.exchange_id_ && partition_offset_ == r.partition_offset_
      }
-    }
+     
+     override def toString() = {
+      partition_offset.toString() + "_" + exchange_id.toString()
+     }
+   }
 }

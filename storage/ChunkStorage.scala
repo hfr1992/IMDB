@@ -29,7 +29,9 @@ class ChunkReaderIterator(
 	class block_accessor{
     
     //virtual
-		def getBlock(block:BlockStreamBase) = {}
+		def getBlock():Block = {
+      new Block(256*1024)  
+    }
     
     /* Set/Get function for block_size. */
 		def getBlockSize():Long = {
@@ -48,10 +50,10 @@ class ChunkReaderIterator(
    * */
 	class InMemeryBlockAccessor extends block_accessor{
 
-		override def getBlock(block:BlockStreamBase) = {
+		override def getBlock():Block = {
     
       //Todo
-      
+      new Block(256*1024) 
     }
     
     /* Set/Get function for target_block. */
@@ -70,10 +72,10 @@ class ChunkReaderIterator(
    * */
 	class InDiskBlockAccessor extends block_accessor{
 
-		override def getBlock(block:BlockStreamBase) = {
+		override def getBlock():Block = {
     
       //Todo
-        
+      new Block(256*1024) 
     }
 
     /* Set/Get function for block_cur. */
@@ -111,10 +113,10 @@ class ChunkReaderIterator(
 
 	class InHDFSBlockAccessor extends block_accessor{
 
-		override def getBlock(block:BlockStreamBase) = {
+		override def getBlock():Block = {
     
       //Todo
-        
+      new Block(256*1024) 
     }
 
     /* Set/Get function for block_cur. */

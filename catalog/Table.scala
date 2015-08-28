@@ -6,10 +6,13 @@ import scala.collection.mutable.HashMap
 import scala.collection.mutable.ArrayBuffer
 
 import storage.MemoryChunkStore
+import common.ids._
 
 /**
  * Data structure of table, maintain the detail information of a RMDB table and some function to read/write the data of the table.
  * Use new Table(String,ArrayBuffer[Attribute]) to construct a Table.
+ * 
+ * Projecttion is use for partition, and it haven't being used right now.
  * @author Suijun
  * 26, Aug, 2015
  */
@@ -131,4 +134,87 @@ class Table(
    * For futher use.
    * */
   var kp_pair_list_ = new HashMap[Attribute,ArrayBuffer[IndexPositionMap]]
+  
+  /*
+   * Below variable is copy from CLAIMS 
+   * For further use..
+   * */
+  var table_id_ :TableID = 0
+  var projection_list_ = new ArrayBuffer[ProjectionDescriptor]
+  var row_number_ = 0L
+  
+  /*
+   * Set/Get function of table_id_ 
+   * */
+  def setTableId(tid:TableID) = {
+    table_id_ = tid
+  }
+  def getTableId() = {
+    table_id_
+  }
+  
+  /*
+   * Set/Get function of projection_list_ 
+   * */
+  def setProjectionList(proList:ArrayBuffer[ProjectionDescriptor]) = {
+    projection_list_ = proList
+  }
+  def getProjectionList() = {
+    projection_list_
+  }
+  
+  def createHashPartitionedProjection(column_list:ArrayBuffer[ColumnOffset],partition_key_index:ColumnOffset,number_of_partitions:Long) = {
+    
+    def projection_id = new ProjectionID(table_id_,projection_list_.length)
+    def projection = new ProjectionDescriptor(projection_id)
+    
+    for (i <- column_list) 
+      projection.addAttribute(attribute_list_(i.toInt))
+
+    projection.DefinePartitonier(number_of_partitions, attribute_list_(partition_key_index.toInt))
+    projection_list_ += projection
+    true
+  }
+  
+  def createHashPartitionedProjection(column_list:ArrayBuffer[ColumnOffset],partition_attribute_name:String,number_of_partitions:Long) = {
+    def projection_id = new ProjectionID(table_id_,projection_list_.length)
+    def projection = new ProjectionDescriptor(projection_id)
+
+    for (i <- column_list) 
+      projection.addAttribute(attribute_list_(i.toInt))
+
+    projection.DefinePartitonier(number_of_partitions,getAttribute(partition_attribute_name))
+    projection_list_ += projection
+    true
+  }
+  
+  def createHashPartitionedProjectionOnAttribute(column_list:ArrayBuffer[Attribute],partition_attribute_name:String,number_of_partitions:Long) = {
+    def projection_id = new ProjectionID(table_id_,projection_list_.length)
+    def projection = new ProjectionDescriptor(projection_id)
+
+    for (i <- column_list) 
+      projection.addAttribute(i)
+
+    projection.DefinePartitonier(number_of_partitions,getAttribute(partition_attribute_name))
+    projection_list_ += projection
+    true
+  }
+  
+  def createHashPartitionedProjectionOnAllAttribute(partition_attribute_name:String,number_of_partitions:Long) = {
+    def projection_id = new ProjectionID(table_id_,projection_list_.length)
+    def projection = new ProjectionDescriptor(projection_id)
+    for (i <- attribute_list_) 
+      projection.addAttribute(i)
+
+    projection.DefinePartitonier(number_of_partitions,getAttribute(partition_attribute_name))
+    projection_list_ += projection
+    true
+  }
+  
+  def getAttribute(name:String):Attribute = {
+    for (i <- attribute_list_)
+      if (i.getAttrName().equals(name))
+        return i
+    return null  
+  }
 }

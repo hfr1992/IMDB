@@ -46,7 +46,7 @@ class DiskStore(private var rootDirs:String){
   def createDirs(rootDirs:String):Boolean = {
     // use rootDirs to creat a dir on disk
     
-    // Todo
+    // Todo create two folder one for overflow, one for remote data
     
     true
 }
