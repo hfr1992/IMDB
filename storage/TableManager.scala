@@ -85,6 +85,7 @@ class TableManager {
         point += 1
       }
     }
+    
     dbb.atomicAppendNewBlock(new BlockStreamVar(block_buf, new Schema()))
     
     /* Print result */

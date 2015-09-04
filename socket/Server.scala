@@ -82,12 +82,19 @@ class Server{
            }
            tuple_value += '~'
            table.insertOneTuple(tuple_key, tuple_value.getBytes)
-           printf(tuple_value+"\n")
+           //printf(tuple_value+"\n")
            tuple_value = ""
          }
       }
       case "select" => {
-        
+        var table = tableManager.table_list_.get(tableOfQuery).get
+        var tuple_key = resultSet(0)(0).toInt
+        var indexPosition = table.position_list_(tuple_key)
+        var index_list = new ArrayBuffer[IndexPosition]
+        index_list += indexPosition
+//         var tuple_value = ""
+        //printf(tuple_key)
+        tableManager.getRecordFromChunk(index_list)
          //Todo
             
       }
@@ -113,18 +120,18 @@ class Server{
       //Result
       //println("Result:")
       val rs = ssp.getResult()
+      for(x<-rs){
+        for(xx<-x){
+          print(xx)
+        }
+        println("")
+      }
+      println(" \n")
       if(tableManager.table_list_.contains(queryTable)){
         parserQuery(queryType,queryTable,rs)
       } else
         println("Table "+queryTable+" is not exist!\n");
-//      for(x<-rs){
-//        for(xx<-x){
-//          print(xx)
-//        }
-//        println("")
-//      }
-//      ArrayBuffer[Array[String]]
-//      println("")
+
     }
     "\"This sentence pretends to be a result.\""
   }
